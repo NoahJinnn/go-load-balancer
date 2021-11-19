@@ -1,14 +1,18 @@
 package main
 
+/* Each worker has its:
+- channel to receive requests
+- count for incomplete tasks
+*/
 type Worker struct {
-	Requests chan Request // work to do
-	Pending  int          // cnt of pending task
-	Index    int          // index in the heap
+	requests chan Request // work to do
+	pending  int          // cnt of pending tasks
+	index    int          // index in the heap
 }
 
 func (w *Worker) DoWork(done chan *Worker) {
 	for {
-		req := <-w.Requests
+		req := <-w.requests
 		req.c <- req.fn()
 		done <- w
 	}
